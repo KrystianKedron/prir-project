@@ -393,7 +393,7 @@
   </action>
   <action name="actionMPI">
    <property name="text">
-    <string>MPI</string>
+    <string>MPI - take photo</string>
    </property>
   </action>
   <action name="actionCUDA">

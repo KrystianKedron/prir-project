@@ -1,5 +1,5 @@
 from functools import partial
-from time import gmtime, strftime
+from time import gmtime, strftime, sleep
 
 from PyQt4 import QtCore, QtGui, uic
 from PyQt4.QtCore import SIGNAL
@@ -9,6 +9,7 @@ import Queue
 
 from Effects import sepia, contrast, blur, laplace, black_white
 from backend.therad import NormalThread
+from backend.mpiPhoto import mpi_take_photo
 
 
 class ImgWidget(QtGui.QWidget):
@@ -38,6 +39,7 @@ class QtVideoCapture(QtGui.QWidget, uic.loadUiType("ui/video_capture.ui")[0]):
     effect_int = 0
     window_width = 600
     window_height = 480
+    take_photo = -1
 
     def __init__(self, parent=None):
         QtGui.QWidget.__init__(self, parent)
@@ -65,7 +67,19 @@ class QtVideoCapture(QtGui.QWidget, uic.loadUiType("ui/video_capture.ui")[0]):
 
     def change_backend(self, action):
 
-        self.add_log("Setup new backend %s" % action.text())
+        option_str = action.text()
+
+        if 'MPI' in option_str:
+
+            global backend
+            backend.stop()
+
+            mpi_take_photo(self.effect_int, backend.capture)
+            self.add_log("The photo take by %s backend" % option_str.split(' ')[0])
+
+            # re-init backend for video
+            backend = NormalThread(0, q, 640, 480, 30)
+            backend.start()
 
     def add_effect(self, effect_int):
 
@@ -183,8 +197,7 @@ class QtVideoCapture(QtGui.QWidget, uic.loadUiType("ui/video_capture.ui")[0]):
 if __name__ == '__main__':
 
     q = Queue.Queue()
-
-    backend = NormalThread(0, q, 1920, 1080, 30)
+    backend = NormalThread(0, q, 640, 480, 30)
 
     app = QtGui.QApplication(sys.argv)
     w = QtVideoCapture(None)
