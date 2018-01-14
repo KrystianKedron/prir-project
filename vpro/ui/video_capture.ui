@@ -235,8 +235,17 @@
                   </item>
                   <item row="3" column="1">
                    <widget class="QSlider" name="horizontalSlider">
+                    <property name="minimum">
+                     <number>1</number>
+                    </property>
+                    <property name="maximum">
+                     <number>20</number>
+                    </property>
                     <property name="orientation">
                      <enum>Qt::Horizontal</enum>
+                    </property>
+                    <property name="tickInterval">
+                     <number>1</number>
                     </property>
                    </widget>
                   </item>
@@ -314,7 +323,7 @@
             </widget>
            </item>
            <item>
-            <widget class="QListView" name="listView"/>
+            <widget class="QListWidget" name="listWidget"/>
            </item>
           </layout>
          </item>
@@ -345,14 +354,17 @@
      <family>Bahnschrift</family>
     </font>
    </property>
-   <widget class="QMenu" name="menuWybierz_Backend">
+   <widget class="QMenu" name="menuBackend">
     <property name="title">
      <string>Wybierz Backend</string>
     </property>
     <addaction name="separator"/>
     <addaction name="actionDomy_lne_W_tki"/>
+    <addaction name="actionOpenMP"/>
+    <addaction name="actionMPI"/>
+    <addaction name="actionCUDA"/>
    </widget>
-   <addaction name="menuWybierz_Backend"/>
+   <addaction name="menuBackend"/>
   </widget>
   <widget class="QStatusBar" name="statusbar">
    <property name="geometry">
@@ -366,12 +378,27 @@
   </widget>
   <action name="actionDomy_lne_W_tki">
    <property name="text">
-    <string>Domyślne Wątki</string>
+    <string>Domyslny</string>
    </property>
    <property name="font">
     <font>
      <family>Bahnschrift</family>
     </font>
+   </property>
+  </action>
+  <action name="actionOpenMP">
+   <property name="text">
+    <string>OpenMP</string>
+   </property>
+  </action>
+  <action name="actionMPI">
+   <property name="text">
+    <string>MPI</string>
+   </property>
+  </action>
+  <action name="actionCUDA">
+   <property name="text">
+    <string>CUDA</string>
    </property>
   </action>
  </widget>

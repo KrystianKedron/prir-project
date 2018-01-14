@@ -17,9 +17,9 @@ def laplace(frame):
     return cv2.filter2D(frame, -1, kernel)
 
 
-def blur(frame):
+def blur(frame, width=3, height=3):
 
-    return cv2.blur(frame, (3, 3))
+    return cv2.blur(frame, (width, height))
 
 
 def black_white(frame):
@@ -30,14 +30,14 @@ def black_white(frame):
     return bw_frame
 
 
-def contrast(frame):
+def contrast(frame, width=8, height=8, power=3.0):
 
     lab = cv2.cvtColor(frame, cv2.COLOR_BGR2LAB)
 
     # -----Splitting the LAB image to different channels-------------------------
     l, a, b = cv2.split(lab)
     # -----Applying CLAHE to L-channel-------------------------------------------
-    clahe = cv2.createCLAHE(clipLimit=3.0, tileGridSize=(8, 8))
+    clahe = cv2.createCLAHE(clipLimit=power, tileGridSize=(width, height))
     cl = clahe.apply(l)
     limg = cv2.merge((cl, a, b))
 
@@ -48,7 +48,7 @@ def test(filename):
 
     img = cv2.imread(filename, 1)
     cv2.imshow('sepia', sepia(img))
-    cv2.imshow('laplance', laplance(img))
+    cv2.imshow('laplace', laplace(img))
     cv2.imshow('blur', blur(img))
     cv2.imshow('black&white', black_white(img))
     cv2.imshow('contrast', contrast(img))
