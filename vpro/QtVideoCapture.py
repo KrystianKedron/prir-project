@@ -39,7 +39,7 @@ class QtVideoCapture(QtGui.QWidget, uic.loadUiType("ui/video_capture.ui")[0]):
     window_width = 600
     window_height = 480
 
-    start_record = False
+    start_record_bool = False
     counter = 0
 
     def __init__(self, parent=None):
@@ -85,7 +85,7 @@ class QtVideoCapture(QtGui.QWidget, uic.loadUiType("ui/video_capture.ui")[0]):
 
     def start_record(self):
 
-        if self.start_record is False:
+        if self.start_record_bool is False:
 
             # self.startButton.setEnabled(False)
             self.startButton.setText('Save record')
@@ -94,10 +94,10 @@ class QtVideoCapture(QtGui.QWidget, uic.loadUiType("ui/video_capture.ui")[0]):
             if self.counter > 0:
                 self.recorder = cv2.VideoWriter('out/record%d.avi' % self.counter,
                                                 cv2.VideoWriter_fourcc(*'XVID'), 20.0, (640, 480))
-            self.start_record = True
+            self.start_record_bool = True
         else:
 
-            self.start_record = False
+            self.start_record_bool = False
             self.recorder.release()
             self.add_log('Video was save in out dir!')
             self.counter += 1
