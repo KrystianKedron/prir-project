@@ -59,18 +59,18 @@ class QtVideoCapture(QtGui.QWidget, uic.loadUiType("ui/video_capture.ui")[0]):
 
     def connect_signals(self):
 
-        self.connect(self.startButton, SIGNAL("clicked()"), self.start_backend)
+        self.connect(self.startButton, SIGNAL("clicked()"), self.start_record)
         self.connect(self.pushButton,  SIGNAL("clicked()"), partial(self.add_effect, effect_int=1))
         self.connect(self.pushButton_2, SIGNAL("clicked()"), partial(self.add_effect, effect_int=2))
         self.connect(self.pushButton_3, SIGNAL("clicked()"), partial(self.add_effect, effect_int=3))
         self.connect(self.pushButton_4, SIGNAL("clicked()"), partial(self.add_effect, effect_int=4))
         self.connect(self.pushButton_5, SIGNAL("clicked()"), partial(self.add_effect, effect_int=5))
 
-        self.menuBackend.triggered[QtGui.QAction].connect(self.change_backend)
+        self.menuBackend.triggered[QtGui.QAction].connect(self.take_photo)
 
         self.timer.timeout.connect(self.update_frame)
 
-    def change_backend(self, action):
+    def take_photo(self, action):
 
         option_str = action.text()
 
@@ -83,7 +83,7 @@ class QtVideoCapture(QtGui.QWidget, uic.loadUiType("ui/video_capture.ui")[0]):
 
         self.effect_int = effect_int
 
-    def start_backend(self):
+    def start_record(self):
 
         if self.start_record is False:
 
