@@ -2,7 +2,7 @@ from mpi4py import MPI
 import numpy as np
 import cv2
 
-from opencv.vpro.Effects import sepia, blur, contrast, laplace, black_white
+from prir.vpro.Effects import sepia, blur, contrast, laplace, black_white
 
 
 def no_effect(img):

@@ -356,13 +356,10 @@
    </property>
    <widget class="QMenu" name="menuBackend">
     <property name="title">
-     <string>Wybierz Backend</string>
+     <string>TAKE PHOTO</string>
     </property>
     <addaction name="separator"/>
-    <addaction name="actionDomy_lne_W_tki"/>
-    <addaction name="actionOpenMP"/>
-    <addaction name="actionMPI"/>
-    <addaction name="actionCUDA"/>
+    <addaction name="actionBUM"/>
    </widget>
    <addaction name="menuBackend"/>
   </widget>
@@ -396,9 +393,9 @@
     <string>MPI - take photo</string>
    </property>
   </action>
-  <action name="actionCUDA">
+  <action name="actionBUM">
    <property name="text">
-    <string>CUDA</string>
+    <string>BUM</string>
    </property>
   </action>
  </widget>

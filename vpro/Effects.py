@@ -17,7 +17,7 @@ def laplace(frame):
     return cv2.filter2D(frame, -1, kernel)
 
 
-def blur(frame, width=3, height=3):
+def blur(frame, width=10, height=10):
 
     return cv2.blur(frame, (width, height))
 
