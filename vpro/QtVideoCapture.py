@@ -9,7 +9,6 @@ import Queue
 
 from Effects import sepia, contrast, blur, laplace, black_white
 from backend.therad import NormalThread
-from backend.mpiPhoto import mpi_take_photo
 
 
 class ImgWidget(QtGui.QWidget):
@@ -40,6 +39,9 @@ class QtVideoCapture(QtGui.QWidget, uic.loadUiType("ui/video_capture.ui")[0]):
     window_width = 600
     window_height = 480
 
+    start_record = False
+    counter = 0
+
     def __init__(self, parent=None):
         QtGui.QWidget.__init__(self, parent)
         self.setupUi(self)
@@ -47,9 +49,13 @@ class QtVideoCapture(QtGui.QWidget, uic.loadUiType("ui/video_capture.ui")[0]):
         self.ImgWidget = ImgWidget(self.ImgWidget)
         self.timer = QtCore.QTimer(self)
 
+        self.recorder = cv2.VideoWriter('out/record.avi', cv2.VideoWriter_fourcc(*'XVID'), 20.0, (640, 480))
+
         self.connect_signals()
 
         self.timer.start(1)
+
+        backend.start()
 
     def connect_signals(self):
 
@@ -79,17 +85,35 @@ class QtVideoCapture(QtGui.QWidget, uic.loadUiType("ui/video_capture.ui")[0]):
 
     def start_backend(self):
 
-        backend.start()
-        self.startButton.setEnabled(False)
-        self.startButton.setText('Starting...')
+        if self.start_record is False:
+
+            # self.startButton.setEnabled(False)
+            self.startButton.setText('Save record')
+            self.startButton.setStyleSheet('background-color:  rgb(255, 0, 0);'
+                                           'color: rgb(255, 255, 255);')
+            if self.counter > 0:
+                self.recorder = cv2.VideoWriter('out/record%d.avi' % self.counter,
+                                                cv2.VideoWriter_fourcc(*'XVID'), 20.0, (640, 480))
+            self.start_record = True
+        else:
+
+            self.start_record = False
+            self.recorder.release()
+            self.add_log('Video was save in out dir!')
+            self.counter += 1
+            self.startButton.setText("Start record")
+            self.startButton.setStyleSheet('')
 
     def update_frame(self):
 
         if not q.empty():
 
-            self.startButton.setText('Camera is live')
             frame = q.get()
             img = frame["img"]
+
+            if self.start_record is True:
+
+                self.recorder.write(img)
 
             img_height, img_width, img_colors = img.shape
 
