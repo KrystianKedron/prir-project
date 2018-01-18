@@ -1,1 +1,1 @@
-from Effects import *
+from QtVideoCapture import start_app

@@ -1,7 +1,7 @@
 import threading
 import cv2
 
-from prir.vpro.Effects import black_white, contrast, blur, sepia, laplace
+from prir.vpro.recorder.effects import black_white, contrast, blur, sepia, laplace, no_effect
 
 
 class NormalThread(threading.Thread):
@@ -42,9 +42,10 @@ class NormalThread(threading.Thread):
 
         _, frame = self.capture.read()
         effect = self.select_effect(effect_int)
-        cv2.imwrite("photo_effect.png", effect(frame))
+        cv2.imwrite("out/photo.png", effect(frame))
 
-    def select_effect(self, arg):
+    @staticmethod
+    def select_effect(arg):
 
         if arg == 1:
             return sepia
@@ -57,9 +58,4 @@ class NormalThread(threading.Thread):
         elif arg == 5:
             return black_white
         else:
-            return self.no_effect
-
-    @staticmethod
-    def no_effect(img):
-
-        return img
+            return no_effect

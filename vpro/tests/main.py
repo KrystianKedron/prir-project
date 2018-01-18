@@ -1,5 +1,5 @@
 import cv2
-from opencv.vpro.Effects import black_white
+from prir.vpro.recorder.effects import black_white
 
 
 class VideoCapture:

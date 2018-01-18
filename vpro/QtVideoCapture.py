@@ -7,7 +7,7 @@ import sys
 import cv2
 import Queue
 
-from Effects import sepia, contrast, blur, laplace, black_white
+from recorder.effects import sepia, contrast, blur, laplace, black_white
 from backend.therad import NormalThread
 
 
@@ -49,13 +49,17 @@ class QtVideoCapture(QtGui.QWidget, uic.loadUiType("ui/video_capture.ui")[0]):
         self.ImgWidget = ImgWidget(self.ImgWidget)
         self.timer = QtCore.QTimer(self)
 
-        self.recorder = cv2.VideoWriter('out/record.avi', cv2.VideoWriter_fourcc(*'XVID'), 20.0, (640, 480))
+        self.fourcc = cv2.VideoWriter_fourcc(*'XVID')
+        self.recorder = cv2.VideoWriter('out/record.avi', self.fourcc, 20.0, (640, 480))
+
+        self.q = Queue.Queue()
+        self.backend = NormalThread(0, self.q, 640, 480, 30)
 
         self.connect_signals()
 
         self.timer.start(1)
 
-        backend.start()
+        self.backend.start()
 
     def connect_signals(self):
 
@@ -76,7 +80,7 @@ class QtVideoCapture(QtGui.QWidget, uic.loadUiType("ui/video_capture.ui")[0]):
 
         if 'BUM' in option_str:
 
-            backend.take_photo(self.effect_int)
+            self.backend.take_photo(self.effect_int)
             self.add_log("The photo take by %s backend" % option_str.split(' ')[0])
 
     def add_effect(self, effect_int):
@@ -93,7 +97,7 @@ class QtVideoCapture(QtGui.QWidget, uic.loadUiType("ui/video_capture.ui")[0]):
                                            'color: rgb(255, 255, 255);')
             if self.counter > 0:
                 self.recorder = cv2.VideoWriter('out/record%d.avi' % self.counter,
-                                                cv2.VideoWriter_fourcc(*'XVID'), 20.0, (640, 480))
+                                                self.fourcc, 20.0, (640, 480))
             self.start_record_bool = True
         else:
 
@@ -106,12 +110,12 @@ class QtVideoCapture(QtGui.QWidget, uic.loadUiType("ui/video_capture.ui")[0]):
 
     def update_frame(self):
 
-        if not q.empty():
+        if not self.q.empty():
 
-            frame = q.get()
+            frame = self.q.get()
             img = frame["img"]
 
-            if self.start_record is True:
+            if self.start_record_bool is True:
 
                 self.recorder.write(img)
 
@@ -195,7 +199,7 @@ class QtVideoCapture(QtGui.QWidget, uic.loadUiType("ui/video_capture.ui")[0]):
 
     def closeEvent(self, event):
 
-        backend.stop()
+        self.backend.stop()
 
     @staticmethod
     def parse_width_height(text_1, text_2):
@@ -210,13 +214,15 @@ class QtVideoCapture(QtGui.QWidget, uic.loadUiType("ui/video_capture.ui")[0]):
         self.listWidget.addItem(log)
 
 
-if __name__ == '__main__':
-
-    q = Queue.Queue()
-    backend = NormalThread(0, q, 640, 480, 30)
+def start_app():
 
     app = QtGui.QApplication(sys.argv)
     w = QtVideoCapture(None)
     w.setWindowTitle('OpenCv Video Capture App')
     w.show()
     app.exec_()
+
+
+if __name__ == '__main__':
+
+    start_app()

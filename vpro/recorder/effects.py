@@ -2,6 +2,10 @@ import cv2
 import numpy as np
 
 
+def no_effect(frame):
+    return frame
+
+
 def sepia(frame):
 
     return cv2.transform(frame, np.array([[0.189, 0.769, 0.393],
