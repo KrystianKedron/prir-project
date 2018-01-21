@@ -21,7 +21,7 @@ def procces_video(video):
 
 N = 108
 M = 9
-gvideo = read_video_from_file_cuda('filimk300.avi')
+gvideo = read_video_from_file_cuda('record.avi')
 start = timer()
 
 d_video = cuda.to_device(gvideo)
