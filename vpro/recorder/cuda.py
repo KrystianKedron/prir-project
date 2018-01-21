@@ -1,29 +1,37 @@
-import numpy as np
-import time
+from numba import cuda
+from timeit import default_timer as timer
 
-from numba import vectorize, cuda
-
-
-@vectorize(['float32(float32, float32)'], target='cuda')
-def VectorAdd(a, b):
-    return a + b
+import cv2
+# print(cv2.getBuildInformation())
+from utils import read_video_from_file_cuda
 
 
-def main():
-    N = 32000000
-
-    A = np.ones(N, dtype=np.float32)
-    B = np.ones(N, dtype=np.float32)
-
-    start = time.time()
-    C = VectorAdd(A, B)
-    vector_add_time = time.time() - start
-
-    print "C[:5] = " + str(C[:5])
-    print "C[-5:] = " + str(C[-5:])
-
-    print "VectorAdd took for % seconds" % vector_add_time
+# @cuda.jit(device=True)
+# def blur(frame):
+#
+#     return cv2.blur(frame, (10, 10))
 
 
-if __name__=='__main__':
-    main()
+@cuda.jit()
+def mandel_kernel(image):
+
+    index = cuda.threadIdx.x + cuda.blockIdx.x * cuda.blockDim.x
+    image[index] = 255
+
+
+N = 108
+M = 9
+gimage = read_video_from_file_cuda('filimk300.avi')
+start = timer()
+
+d_image = cuda.to_device(gimage)
+
+mandel_kernel[(N+M-1)/M, M](d_image)
+d_image.to_host()
+
+dt = timer() - start
+
+print "Mandelbrot created on GPU in %f s" % dt
+# print 'Modify video ', gimage
+cv2.imshow('New video', gimage[0])
+cv2.waitKey(0)
