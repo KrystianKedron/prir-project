@@ -13,25 +13,25 @@ from utils import read_video_from_file_cuda
 
 
 @cuda.jit()
-def mandel_kernel(image):
+def procces_video(video):
 
     index = cuda.threadIdx.x + cuda.blockIdx.x * cuda.blockDim.x
-    image[index] = 255
+    video[index] = 255
 
 
 N = 108
 M = 9
-gimage = read_video_from_file_cuda('filimk300.avi')
+gvideo = read_video_from_file_cuda('filimk300.avi')
 start = timer()
 
-d_image = cuda.to_device(gimage)
+d_video = cuda.to_device(gvideo)
 
-mandel_kernel[(N+M-1)/M, M](d_image)
-d_image.to_host()
+procces_video[(N+M-1)/M, M](d_video)
+d_video.to_host()
 
 dt = timer() - start
 
-print "Mandelbrot created on GPU in %f s" % dt
+print "Processing in GPU done in %f s" % dt
 # print 'Modify video ', gimage
-cv2.imshow('New video', gimage[0])
+cv2.imshow('New video', d_video[0])
 cv2.waitKey(0)
